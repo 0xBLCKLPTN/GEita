@@ -27,8 +27,9 @@ pub fn init_font(imgui: &mut Context) {
     let glyph_range = FontGlyphRanges::cyrillic();
 
     // FIXME: change folders to relative.
-    let _ = imgui.fonts().add_font(&[FontSource::TtfData {
-        data: include_bytes!("/Users/twofacedjanus/Documents/git/GEita/resources/fonts/JetBrainsMono.ttf"),
+    /* 
+    let mono = imgui.fonts().add_font(&[FontSource::TtfData {
+        data: include_bytes!("/Users/twofacedjanus/Documents/git/GEita/src/JB.ttf"),
         size_pixels: 16.0,
         config: Some(FontConfig {
             glyph_ranges: glyph_range,
@@ -36,6 +37,7 @@ pub fn init_font(imgui: &mut Context) {
             ..Default::default()
         }),
     }]);
+    */
 }
 
 

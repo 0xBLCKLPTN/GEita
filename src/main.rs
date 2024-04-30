@@ -13,6 +13,8 @@ use imgui::StyleVar;
 mod geita_ui;
 use geita_ui::{GeitaUi, *};
 use imgui::Context;
+//mod project_manager;
+//use crate::project_manager::GeitaUi;
 
 pub struct WindowSize {
   pub w: u32,
@@ -23,13 +25,12 @@ fn main() {
   let sdl_context = sdl2::init().unwrap();
   let video = sdl_context.video().unwrap();
   let mut ws = WindowSize {w: 1000u32, h: 1000u32 };
-  
   {
     let gl_attr = video.gl_attr();
     gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
     gl_attr.set_context_version(3, 0);
   }
-  
+
 
   let window = video.window("Geite Project Manager", ws.w, ws.h)
     .position_centered()
@@ -44,8 +45,20 @@ fn main() {
 
   let mut imgui = imgui::Context::create();
   imgui.set_ini_filename(None);
-  //let style = Style::use_classic_colors();
   
+  // FIXME: later.
+  let glyph_range = FontGlyphRanges::cyrillic();
+  let mono = imgui.fonts().add_font(&[FontSource::TtfData{
+        data: include_bytes!("../resources/fonts/JB.ttf"), //this files are valid
+        size_pixels: 16.0,
+        config: Some(imgui::FontConfig {
+          glyph_ranges: glyph_range,
+          size_pixels: 16.0,
+          ..Default::default()
+        }),
+    }]);
+
+
   let mut imgui_sdl2 = imgui_sdl2::ImguiSdl2::new(&mut imgui, &window);
 
   let renderer = imgui_opengl_renderer::Renderer::new(&mut imgui, |s| video.gl_get_proc_address(s) as _);
@@ -53,11 +66,8 @@ fn main() {
   let mut event_pump = sdl_context.event_pump().unwrap();
 
   let mut last_frame = Instant::now();
-  
   init_style(&mut imgui);
-  //FIXME: all troubles in file `geita_ui/mod.rs`
-  //init_font(&mut imgui);
-  
+
   'running: loop {
     use sdl2::event::Event;
     use sdl2::keyboard::Keycode;
@@ -83,10 +93,10 @@ fn main() {
     last_frame = now;
     imgui.io_mut().delta_time = delta_s;
     let ui = imgui.frame();
-    
+
     ui.show_demo_window(&mut true);
     ui.show_project_manager_window(&mut true);
-    
+
     unsafe {
       gl::ClearColor(0.44, 0.44, 0.64, 0.5);
       gl::Clear(gl::COLOR_BUFFER_BIT);
@@ -95,7 +105,7 @@ fn main() {
     renderer.render(&mut imgui);
 
     window.gl_swap_window();
+    println!("{:?}", window.size());
     ::std::thread::sleep(::std::time::Duration::new(0, 1_000_000_000u32 / 60));
   }
 }
-
