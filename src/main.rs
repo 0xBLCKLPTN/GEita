@@ -47,17 +47,7 @@ fn main() {
   imgui.set_ini_filename(None);
   
   // FIXME: later.
-  let glyph_range = FontGlyphRanges::cyrillic();
-  let mono = imgui.fonts().add_font(&[FontSource::TtfData{
-        data: include_bytes!("../resources/fonts/JB.ttf"), //this files are valid
-        size_pixels: 16.0,
-        config: Some(imgui::FontConfig {
-          glyph_ranges: glyph_range,
-          size_pixels: 16.0,
-          ..Default::default()
-        }),
-    }]);
-
+  init_font(&mut imgui);
 
   let mut imgui_sdl2 = imgui_sdl2::ImguiSdl2::new(&mut imgui, &window);
 

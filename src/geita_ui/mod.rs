@@ -23,6 +23,17 @@ pub fn init_style(imgui: &mut Context) {
 
 
 pub fn init_font(imgui: &mut Context) {
+    let glyph_range = FontGlyphRanges::cyrillic();
+    let mono = imgui.fonts().add_font(&[FontSource::TtfData{
+        data: include_bytes!("../../resources/fonts/JB.ttf"), //this files are valid
+        size_pixels: 16.0,
+        config: Some(imgui::FontConfig {
+          glyph_ranges: glyph_range,
+          size_pixels: 16.0,
+          ..Default::default()
+        }),
+    }]);
+    
     // FIXME: https://github.com/imgui-rs/imgui-rs/issues/421
     let glyph_range = FontGlyphRanges::cyrillic();
 
