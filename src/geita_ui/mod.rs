@@ -33,22 +33,6 @@ pub fn init_font(imgui: &mut Context) {
           ..Default::default()
         }),
     }]);
-    
-    // FIXME: https://github.com/imgui-rs/imgui-rs/issues/421
-    let glyph_range = FontGlyphRanges::cyrillic();
-
-    // FIXME: change folders to relative.
-    /* 
-    let mono = imgui.fonts().add_font(&[FontSource::TtfData {
-        data: include_bytes!("/Users/twofacedjanus/Documents/git/GEita/src/JB.ttf"),
-        size_pixels: 16.0,
-        config: Some(FontConfig {
-            glyph_ranges: glyph_range,
-            size_pixels: 16.0,
-            ..Default::default()
-        }),
-    }]);
-    */
 }
 
 
