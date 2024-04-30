@@ -1,10 +1,15 @@
-use imgui::{Ui, Condition, TabBar};
-use imgui::{FontConfig, FontSource};
+use imgui::{
+    Ui, Context, Condition,
+    TabBar, TabItem,
+    FontConfig, FontSource, FontGlyphRanges,
+};
 use crate::imgui;
-use imgui::Context;
+
+
 pub trait GeitaUi {
     fn show_project_manager_window(&self, is_open: &bool);
 }
+
 
 pub fn init_style(imgui: &mut Context) {
     let mut style = imgui.style_mut();
@@ -16,8 +21,25 @@ pub fn init_style(imgui: &mut Context) {
     style.use_classic_colors();
 }
 
+
+pub fn init_font(imgui: &mut Context) {
+    // FIXME: https://github.com/imgui-rs/imgui-rs/issues/421
+    let glyph_range = FontGlyphRanges::cyrillic();
+
+    // FIXME: change folders to relative.
+    let _ = imgui.fonts().add_font(&[FontSource::TtfData {
+        data: include_bytes!("/Users/twofacedjanus/Documents/git/GEita/resources/fonts/JetBrainsMono.ttf"),
+        size_pixels: 16.0,
+        config: Some(FontConfig {
+            glyph_ranges: glyph_range,
+            size_pixels: 16.0,
+            ..Default::default()
+        }),
+    }]);
+}
+
+
 impl GeitaUi for Ui {
- 
     fn show_project_manager_window(&self, is_open: &bool) {
         let mut selected_tab = 0;
         self.window("Project Manager")
@@ -28,11 +50,11 @@ impl GeitaUi for Ui {
             .build(|| {
                 TabBar::new("MyTabBar")
                     .build(&self, || {
-                        imgui::TabItem::new("Локальные проекты")
+                        TabItem::new("Локальные проекты")
                             .build(&self, || {
                                 self.text("Local Projects");
                             });
-                        imgui::TabItem::new("Удаленные проекты")
+                        TabItem::new("Удаленные проекты")
                             .build(&self, || {
                                 self.text("Remote Projects");
                             });
