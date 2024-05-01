@@ -4,21 +4,39 @@ extern crate imgui_sdl2;
 extern crate gl;
 extern crate imgui_opengl_renderer;
 
+mod geita_ui;
+
 use std::time::Instant;
 use imgui::Condition;
 use imgui::FontSource;
 use imgui::FontGlyphRanges;
 use imgui::Style;
 use imgui::StyleVar;
-mod geita_ui;
 use geita_ui::{GeitaUi, *};
 use imgui::Context;
+use sdl2::rect::Rect;
+use sdl2::render::Canvas;
+use sdl2::video::Window;
 //mod project_manager;
 //use crate::project_manager::GeitaUi;
 
 pub struct WindowSize {
   pub w: u32,
   pub h: u32,
+}
+
+
+fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>) {
+  canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
+  let rect1 = Rect::new(100, 100, 100, 100);
+  let rect2 = Rect::new(200, 100, 100, 100);
+  let rect3 = Rect::new(200, 200, 100, 100);
+  let rect4 = Rect::new(100, 200, 100, 100);
+
+  canvas.draw_rect(rect1).expect("Failed to draw rectangle");
+  canvas.draw_rect(rect2).expect("Failed to draw rectangle");
+  canvas.draw_rect(rect3).expect("Failed to draw rectangle");
+  canvas.draw_rect(rect4).expect("Failed to draw rectangle");
 }
 
 fn main() {
@@ -57,6 +75,7 @@ fn main() {
 
   let mut last_frame = Instant::now();
   init_style(&mut imgui);
+  let mut canvas = window.into_canvas().build().unwrap();
 
   'running: loop {
     use sdl2::event::Event;
@@ -86,6 +105,11 @@ fn main() {
 
     ui.show_demo_window(&mut true);
     ui.show_project_manager_window(&mut true);
+
+    canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+    canvas.clear();
+    draw_2d_cube(&mut canvas);
+    canvas.present();
 
     unsafe {
       gl::ClearColor(0.44, 0.44, 0.64, 0.5);
