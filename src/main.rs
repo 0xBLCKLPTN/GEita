@@ -4,96 +4,73 @@ extern crate gl;
 extern crate imgui_opengl_renderer;
 
 mod geita_ui;
+mod geita_core;
 
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use imgui::{ Condition, FontSource, FontGlyphRanges,
             Style, StyleVar, Context };
 
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
-use sdl2::video::Window;
+use sdl2::video::{Window, WindowContext};
 use sdl2::{Sdl, VideoSubsystem};
+use sdl2::keyboard::Keycode;
+use sdl2::event::Event;
+use sdl2::pixels::Color;
+use geita_core::window::CoreWindow;
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::render::TextureCreator;
+use sdl2::render::Texture;
+use sdl2::surface::Surface;
 
-pub struct WindowConfig {
-    width: u32,
-    height: u32,
-    window_name: String,
-}
 
-pub struct ImguiFeatures {
-    imgui_initialized: i8,
-}
-
-pub struct CoreWindow {
-    sdl_context: Sdl,
-    video: VideoSubsystem,
-    window_config: WindowConfig,
-    imgui_features: ImguiFeatures,
-    window: Window,
-}
-
-impl CoreWindow {
-    pub fn new(window_name: String) -> Self {
-        let sdl_context = sdl2::init().unwrap();
-        let video = sdl_context.video().unwrap();
-
-        let mut width = 1000u32;
-        let mut height = 1000u32;
-        let mut wc = WindowConfig { width, height, window_name: window_name.clone() };
-
-        {
-            let gl_attr = video.gl_attr();
-            gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
-            gl_attr.set_context_version(3, 0);
-        }
-
-        let window = video.window(&window_name, wc.height, wc.height)
-            .position_centered()
-            .resizable()
-            .opengl()
-            .allow_highdpi()
-            .build()
-            .unwrap();
-
-        let _gl_context = window.gl_create_context().expect("Couldn't create GL context");
-        gl::load_with(|s| video.gl_get_proc_address(s) as _);
-
-        let mut imgui_features = ImguiFeatures::new(1i8);
-
-        return CoreWindow {
-            sdl_context,
-            video,
-            window_config: wc,
-            imgui_features,
-        }
-    }
-
+fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>, position: &mut [i32; 2]) {
+    let texture_creator = canvas.texture_creator();
+    let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
+    let mut texture = texture_creator.create_texture_streaming(PixelFormatEnum::RGB24, 512, 512 ).unwrap();
     
-    /*
-    pub fn init_imgui(&mut self) {
-        let mut imgui = imgui::Context::create();
-        imgui.set_ini_filename(None);
-    }
-    */
+    texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
+        for y in (0..256) {
+            for x in (0..256) {
+                let offset = y*pitch + x*3;
+                buffer[offset + 0] = x as u8;
+                buffer[offset + 1] = y as u8;
+                buffer[offset + 2] = 0;
+            }
+        }
+    }).unwrap();
+
+    canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
+    let rect1 = Rect::new(position[0], position[1], 250, 250);
+    canvas.copy(&texture, None, rect1).unwrap();
 }
 
-impl ImguiFeatures {
-    pub fn new(incl: i8, window: &Window) -> Self {
-        return match incl {
-            0i8 => { Self { imgui_initialized: incl } },
-            1i8 => {
-                let mut imgui = imgui::Context::create();
-                let mut imgui_sdl2 = imgui_sdl2::ImguiSdl2::new(&imgui, &window);
-                let renderer = imgui_opengl_renderer::Renderer::new(&mut imgui, |s|, video.gl_get_proc_address(s) as _);
-                Self { imgui_initialized: incl, imgui, imgui_sdl2, renderer } },
-            _ => { Self { imgui_initialized: 0i8 } },
-        };
+fn main() {
+    let mut window = CoreWindow::new("Project Manager".to_string());
+    let mut canvas = window.window.into_canvas().build().unwrap();
+    let mut event_pump = window.sdl_context.event_pump().unwrap();
+    //let mut texture = renderer.create_texture_streaming(PixelFormatEnum::RGB24, (256, 256)).unwrap();
+
+    'running: loop {
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => break 'running,
+                _ => {}
+            }
+        }
+
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
+        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+        canvas.clear();
+
+        draw_2d_cube(&mut canvas, &mut [300i32,300i32]);
+        draw_2d_cube(&mut canvas, &mut [700i32,700i32]);
+
+        canvas.present();
     }
-}
-
-
-fn main() {    
-    //let mut core
-    println!("");
 }
