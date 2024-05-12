@@ -1,125 +1,93 @@
-extern crate sdl2;
 extern crate imgui;
 extern crate imgui_sdl2;
 extern crate gl;
 extern crate imgui_opengl_renderer;
 
 mod geita_ui;
+mod geita_core;
 
-use std::time::Instant;
-use imgui::Condition;
-use imgui::FontSource;
-use imgui::FontGlyphRanges;
-use imgui::Style;
-use imgui::StyleVar;
-use geita_ui::{GeitaUi, *};
-use imgui::Context;
+use std::path::Path;
+use std::time::{Duration, Instant};
+
+use imgui::sys::ImVec2;
+use imgui::{ Condition, FontSource, FontGlyphRanges,
+            Style, StyleVar, Context };
+
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
-use sdl2::video::Window;
-//mod project_manager;
-//use crate::project_manager::GeitaUi;
+use sdl2::video::{Window, WindowContext};
+use sdl2::{Sdl, VideoSubsystem};
+use sdl2::keyboard::Keycode;
+use sdl2::event::Event;
+use sdl2::pixels::Color;
+use geita_core::window::CoreWindow;
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::render::TextureCreator;
+use sdl2::render::Texture;
+use sdl2::surface::Surface;
+use sdl2::image::{InitFlag, LoadTexture};
 
-pub struct WindowSize {
-  pub w: u32,
-  pub h: u32,
+pub struct Entity2D<'a> {
+    pub texture: Texture<'a>,
+    pub size: ImVec2,
+    pub position: ImVec2,
 }
 
+fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>, position: &mut [i32; 2]) {
+    let texture_creator = canvas.texture_creator();
+    let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
+    let mut texture = texture_creator.create_texture_streaming(PixelFormatEnum::RGB24, 512, 512 ).unwrap();
+    
+    texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
+        for y in (0..256) {
+            for x in (0..256) {
+                let offset = y*pitch + x*3;
+                buffer[offset + 0] = x as u8;
+                buffer[offset + 1] = y as u8;
+                buffer[offset + 2] = 0;
+            }
+        }
+    }).unwrap();
 
-fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>) {
-  canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
-  let rect1 = Rect::new(100, 100, 100, 100);
-  let rect2 = Rect::new(200, 100, 100, 100);
-  let rect3 = Rect::new(200, 200, 100, 100);
-  let rect4 = Rect::new(100, 200, 100, 100);
-
-  canvas.draw_rect(rect1).expect("Failed to draw rectangle");
-  canvas.draw_rect(rect2).expect("Failed to draw rectangle");
-  canvas.draw_rect(rect3).expect("Failed to draw rectangle");
-  canvas.draw_rect(rect4).expect("Failed to draw rectangle");
+    canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
+    let rect1 = Rect::new(position[0], position[1], 250, 250);
+    canvas.copy(&texture, None, rect1).unwrap();
 }
+
 
 fn main() {
-  let sdl_context = sdl2::init().unwrap();
-  let video = sdl_context.video().unwrap();
-  let mut ws = WindowSize {w: 1000u32, h: 1000u32 };
-  {
-    let gl_attr = video.gl_attr();
-    gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
-    gl_attr.set_context_version(3, 0);
-  }
+    let mut window = CoreWindow::new("Project Manager".to_string());
+    let mut canvas = window.window.into_canvas().build().unwrap();
+    let mut event_pump = window.sdl_context.event_pump().unwrap();
+    //let mut texture = renderer.create_texture_streaming(PixelFormatEnum::RGB24, (256, 256)).unwrap();
+    let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG).unwrap();
+    let texture_creator = canvas.texture_creator();
+    let png = Path::new("/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
+    let texture = texture_creator.load_texture(png).unwrap();
 
-
-  let window = video.window("Geite Project Manager", ws.w, ws.h)
-    .position_centered()
-    .resizable()
-    .opengl()
-    .allow_highdpi()
-    .build()
-    .unwrap();
-
-  let _gl_context = window.gl_create_context().expect("Couldn't create GL context");
-  gl::load_with(|s| video.gl_get_proc_address(s) as _);
-
-  let mut imgui = imgui::Context::create();
-  imgui.set_ini_filename(None);
-  
-  // FIXME: later.
-  init_font(&mut imgui);
-
-  let mut imgui_sdl2 = imgui_sdl2::ImguiSdl2::new(&mut imgui, &window);
-
-  let renderer = imgui_opengl_renderer::Renderer::new(&mut imgui, |s| video.gl_get_proc_address(s) as _);
-
-  let mut event_pump = sdl_context.event_pump().unwrap();
-
-  let mut last_frame = Instant::now();
-  init_style(&mut imgui);
-  let mut canvas = window.into_canvas().build().unwrap();
-
-  'running: loop {
-    use sdl2::event::Event;
-    use sdl2::keyboard::Keycode;
-
-    for event in event_pump.poll_iter() {
-      imgui_sdl2.handle_event(&mut imgui, &event);
-      if imgui_sdl2.ignore_event(&event) { continue; }
-
-      match event {
-        Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-          break 'running
-        },
-        _ => {}
-      }
-    }
-
-
-    imgui_sdl2.prepare_frame(imgui.io_mut(), &window, &event_pump.mouse_state());
-
-    let now = Instant::now();
-    let delta = now - last_frame;
-    let delta_s = delta.as_secs() as f32 + delta.subsec_nanos() as f32 / 1_000_000_000.0;
-    last_frame = now;
-    imgui.io_mut().delta_time = delta_s;
-    let ui = imgui.frame();
-
-    ui.show_demo_window(&mut true);
-    ui.show_project_manager_window(&mut true);
-
-    canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-    canvas.clear();
-    draw_2d_cube(&mut canvas);
+    canvas.copy(&texture, None, None);
     canvas.present();
+    
+    
+    'running: loop {
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => break 'running,
+                _ => {}
+            }
+        }
 
-    unsafe {
-      gl::ClearColor(0.44, 0.44, 0.64, 0.5);
-      gl::Clear(gl::COLOR_BUFFER_BIT);
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
+        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+        canvas.clear();
+
+        draw_2d_cube(&mut canvas, &mut [300i32,300i32]);
+        draw_2d_cube(&mut canvas, &mut [700i32,700i32]);
+
+        canvas.present();
     }
-    imgui_sdl2.prepare_render(&ui, &window);
-    renderer.render(&mut imgui);
-
-    window.gl_swap_window();
-    println!("{:?}", window.size());
-    ::std::thread::sleep(::std::time::Duration::new(0, 1_000_000_000u32 / 60));
-  }
 }
