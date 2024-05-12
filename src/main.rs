@@ -6,8 +6,10 @@ extern crate imgui_opengl_renderer;
 mod geita_ui;
 mod geita_core;
 
+use std::path::Path;
 use std::time::{Duration, Instant};
 
+use imgui::sys::ImVec2;
 use imgui::{ Condition, FontSource, FontGlyphRanges,
             Style, StyleVar, Context };
 
@@ -23,7 +25,13 @@ use sdl2::pixels::PixelFormatEnum;
 use sdl2::render::TextureCreator;
 use sdl2::render::Texture;
 use sdl2::surface::Surface;
+use sdl2::image::{InitFlag, LoadTexture};
 
+pub struct Entity2D<'a> {
+    pub texture: Texture<'a>,
+    pub size: ImVec2,
+    pub position: ImVec2,
+}
 
 fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>, position: &mut [i32; 2]) {
     let texture_creator = canvas.texture_creator();
@@ -46,12 +54,21 @@ fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>, position: &mut [i32; 2
     canvas.copy(&texture, None, rect1).unwrap();
 }
 
+
 fn main() {
     let mut window = CoreWindow::new("Project Manager".to_string());
     let mut canvas = window.window.into_canvas().build().unwrap();
     let mut event_pump = window.sdl_context.event_pump().unwrap();
     //let mut texture = renderer.create_texture_streaming(PixelFormatEnum::RGB24, (256, 256)).unwrap();
+    let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG).unwrap();
+    let texture_creator = canvas.texture_creator();
+    let png = Path::new("/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
+    let texture = texture_creator.load_texture(png).unwrap();
 
+    canvas.copy(&texture, None, None);
+    canvas.present();
+    
+    
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
