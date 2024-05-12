@@ -53,7 +53,7 @@ fn main() {
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         canvas.clear();
 
-        Rect2D::draw(&mut canvas, &mut [300i32,300i32], &texture_creator);
+        Rect2D::draw(&mut canvas, &mut [300i32,300i32], &texture_creator, &mut [256 as usize; 2]);
         let logo = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
         let player = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/hollow_knight_player.png");
         

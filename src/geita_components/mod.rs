@@ -10,7 +10,10 @@ pub enum GeitaComponents {
     Rect2D,
 }
 
-
+/*
 pub trait ComponentSystem {
-    fn add_component()
+    fn add_child(&mut self, child: GeitaComponents) {
+        &self.child_components.push(child);
+    }
 }
+*/

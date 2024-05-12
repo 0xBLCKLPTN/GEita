@@ -12,7 +12,7 @@ pub struct ImageComp<'a> {
     pub position: [i32; 2],
     pub path: &'a Path,
     pub texture: Texture<'a>,
-    pub child_components: Option<GeitaComponents>,
+    pub child_components: Vec<GeitaComponents>,
 }
 
 impl<'a> ImageComp<'a> {
@@ -22,6 +22,7 @@ impl<'a> ImageComp<'a> {
         texture_creator: &'a TextureCreator<WindowContext>,
         png: &'a Path,
     ) -> Self {
+        let child_components: Vec<GeitaComponents> = Vec::new();
         let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
         let texture = texture_creator.load_texture(png).unwrap();
         canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
@@ -33,7 +34,7 @@ impl<'a> ImageComp<'a> {
             position: *position,
             path: png,
             texture,
-            child_components: None,
+            child_components,
         }
     }
 }
