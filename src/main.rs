@@ -5,6 +5,7 @@ extern crate imgui_opengl_renderer;
 
 mod geita_ui;
 mod geita_core;
+mod geita_components;
 
 use std::path::Path;
 use std::time::{Duration, Instant};
@@ -26,42 +27,7 @@ use sdl2::render::TextureCreator;
 use sdl2::render::Texture;
 use sdl2::surface::Surface;
 use sdl2::image::{InitFlag, LoadTexture};
-
-pub struct Entity2D<'a> {
-    pub texture: Texture<'a>,
-    pub size: ImVec2,
-    pub position: ImVec2,
-}
-
-fn draw_image(canvas: &mut Canvas<sdl2::video::Window>, position: &mut [i32; 2], texture_creator: &TextureCreator<WindowContext>) {
-    let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
-    let png = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
-    let texture = texture_creator.load_texture(png).unwrap();
-    canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
-    let rect1 = Rect::new(position[0], position[1], 250, 250);
-    canvas.copy(&texture, None, rect1).unwrap();
-}
-
-fn draw_2d_cube(canvas: &mut Canvas<sdl2::video::Window>, position: &mut [i32; 2], texture_creator: &TextureCreator<WindowContext>) {
-    let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
-    let mut texture = texture_creator.create_texture_streaming(PixelFormatEnum::RGB24, 512, 512 ).unwrap();
-
-    texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-        for y in (0..256) {
-            for x in (0..256) {
-                let offset = y*pitch + x*3;
-                buffer[offset + 0] = x as u8;
-                buffer[offset + 1] = y as u8;
-                buffer[offset + 2] = 0;
-            }
-        }
-    }).unwrap();
-    
-
-    canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
-    let rect1 = Rect::new(position[0], position[1], 250, 250);
-    canvas.copy(&texture, None, rect1).unwrap();
-}
+use geita_components::{Rect2D, ImageComp};
 
 
 fn main() {
@@ -87,8 +53,12 @@ fn main() {
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         canvas.clear();
 
-        draw_2d_cube(&mut canvas, &mut [300i32,300i32], &texture_creator);
-        draw_image(&mut canvas, &mut [700i32,700i32], &texture_creator);
+        Rect2D::draw(&mut canvas, &mut [300i32,300i32], &texture_creator);
+        let logo = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
+        let player = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/hollow_knight_player.png");
+        
+        ImageComp::draw(&mut canvas, &mut [700i32,700i32], &texture_creator, logo);
+        ImageComp::draw(&mut canvas, &mut [100i32,700i32], &texture_creator, player);
 
         canvas.present();
     }
