@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["init_font","init_style"],"trait":["GeitaUi"]};

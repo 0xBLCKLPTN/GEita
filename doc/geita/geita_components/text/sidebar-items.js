@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_texture_from_text","load_font","render_text"],"struct":["Text"]};
