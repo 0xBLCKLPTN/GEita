@@ -10,6 +10,7 @@ mod geita_ui;
 use std::path::Path;
 use std::time::{Duration, Instant};
 
+use geita_components::text::Text;
 use imgui::sys::ImVec2;
 use imgui::{Condition, Context, FontGlyphRanges, FontSource, Style, StyleVar};
 
@@ -34,7 +35,7 @@ fn main() {
     let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG).unwrap();
     let ttf_context = sdl2::ttf::init().unwrap();
     let texture_creator = canvas.texture_creator();
-    let font = text::load_font("/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Fonts/JBMono/ttf/JetBrainsMono-Medium.ttf", 36, &ttf_context);
+    //let font = text::load_font("/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Fonts/JBMono/ttf/JetBrainsMono-Medium.ttf", 36, &ttf_context);
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -59,6 +60,15 @@ fn main() {
             &mut [256 as usize; 2],
         );
 
+        Text::draw(
+            "/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Fonts/JBMono/ttf/JetBrainsMono-Medium.ttf",
+            36,
+            &ttf_context,
+            &texture_creator,
+            "Welcome to SDL2",
+            &mut [100i32; 2],
+            &mut canvas);
+
         //let logo = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
         //let player = Path::new("/mnt/c/Users/oksan/OneDrive/Documents/GitHub/geita_project/Fortnight-resources/Assets/mario2d.png");
         let logo = Path::new("/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Assets/hollow_knight_LARGE_ICO.png");
@@ -66,14 +76,6 @@ fn main() {
             "/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Assets/hollow_knight_player.png",
         );
 
-        text::render_text(
-            &mut canvas,
-            "Привет, SDL2!",
-            &font,
-            &texture_creator,
-            100,
-            100,
-        );
         //ImageComp::draw(&mut canvas, &mut [700i32,700i32], &texture_creator, logo, &mut [100u32, 100u32]);
         ImageComp::draw(
             &mut canvas,
