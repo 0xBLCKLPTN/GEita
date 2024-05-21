@@ -1,11 +1,13 @@
-use std::path::Path;
-use sdl2::render::{Texture, Canvas, TextureCreator};
-use sdl2::video::WindowContext;
-use sdl2::surface::Surface;
+use crate::geita_components::GeitaComponents;
+use sdl2::image::LoadTexture;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
-use sdl2::image::LoadTexture;
-use crate::geita_components::GeitaComponents;
+use sdl2::render::{Canvas, Texture, TextureCreator};
+use sdl2::surface::Surface;
+use sdl2::video::WindowContext;
+use std::path::Path;
+
+use super::Camera;
 
 pub struct Rect2D<'a> {
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
@@ -21,21 +23,25 @@ impl<'a> Rect2D<'a> {
         position: &mut [i32; 2],
         texture_creator: &'a TextureCreator<WindowContext>,
         size: &mut [usize; 2],
+        camera: &Camera,
     ) -> Self {
         let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
-        let mut texture = texture_creator.create_texture_streaming(PixelFormatEnum::RGB24, 512, 512 ).unwrap();
+        let mut texture = texture_creator
+            .create_texture_streaming(PixelFormatEnum::RGB24, 512, 512)
+            .unwrap();
         let mut child_components: Vec<GeitaComponents> = Vec::new();
-        texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-            for y in (0..256) {
-                for x in (0..256) {
-                    let offset = y*pitch + x*3;
-                    buffer[offset + 0] = x as u8;
-                    buffer[offset + 1] = y as u8;
-                    buffer[offset + 2] = 0;
+        texture
+            .with_lock(None, |buffer: &mut [u8], pitch: usize| {
+                for y in (0..256) {
+                    for x in (0..256) {
+                        let offset = y * pitch + x * 3;
+                        buffer[offset + 0] = x as u8;
+                        buffer[offset + 1] = y as u8;
+                        buffer[offset + 2] = 0;
+                    }
                 }
-            }
-        }).unwrap();
-        
+            })
+            .unwrap();
 
         canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
         let rect1 = Rect::new(position[0], position[1], 250, 250);
@@ -57,19 +63,23 @@ impl<'a> Rect2D<'a> {
         size: &mut [usize; 2],
     ) -> Self {
         let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
-        let mut texture = texture_creator.create_texture_streaming(PixelFormatEnum::RGB24, 512, 512 ).unwrap();
+        let mut texture = texture_creator
+            .create_texture_streaming(PixelFormatEnum::RGB24, 512, 512)
+            .unwrap();
         let mut child_components: Vec<GeitaComponents> = Vec::new();
-        
-        texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-            for y in (0..size[0]) {
-                for x in (0..size[1]) {
-                    let offset = y*pitch + x*3;
-                    buffer[offset + 0] = 255 as u8;
-                    buffer[offset + 1] = 255 as u8;
-                    buffer[offset + 2] = 255 as u8;
+
+        texture
+            .with_lock(None, |buffer: &mut [u8], pitch: usize| {
+                for y in (0..size[0]) {
+                    for x in (0..size[1]) {
+                        let offset = y * pitch + x * 3;
+                        buffer[offset + 0] = 255 as u8;
+                        buffer[offset + 1] = 255 as u8;
+                        buffer[offset + 2] = 255 as u8;
+                    }
                 }
-            }
-        }).unwrap();
+            })
+            .unwrap();
 
         canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
         let rect1 = Rect::new(position[0], position[1], 250, 250);

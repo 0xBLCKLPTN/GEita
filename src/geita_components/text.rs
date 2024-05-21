@@ -7,6 +7,8 @@ use crate::TextureCreator;
 use crate::TextureQuery;
 use crate::Window;
 
+use super::Camera;
+
 pub struct Text<'a> {
     pub text: String,
     pub font: Font<'a, 'a>,
@@ -14,6 +16,7 @@ pub struct Text<'a> {
     pub position: [i32; 2],
     pub texture: Texture<'a>,
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
+    camera: &'a mut Camera,
 }
 
 impl<'a> Text<'a> {
@@ -25,6 +28,7 @@ impl<'a> Text<'a> {
         text: &str,
         position: &'a mut [i32; 2],
         canvas: &'a mut Canvas<Window>,
+        camera: &'a mut Camera,
     ) -> Text<'a> {
         let font = load_font(font_path, font_size, font_context);
         let texture = create_texture_from_text(text, &font, texture_creator);
@@ -33,8 +37,8 @@ impl<'a> Text<'a> {
             text,
             &font,
             texture_creator,
-            position[0],
-            position[1],
+            position[0] - camera.position[0],
+            position[1] - camera.position[1],
         );
 
         Text {
@@ -44,6 +48,7 @@ impl<'a> Text<'a> {
             size: font_size,
             texture,
             canvas,
+            camera,
         }
     }
 }
