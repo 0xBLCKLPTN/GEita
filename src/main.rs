@@ -31,12 +31,7 @@ use sdl2::{Sdl, VideoSubsystem};
 
 fn main() {
     let mut window = CoreWindow::new("Project Manager".to_string());
-    let mut canvas = window.window.into_canvas().build().unwrap();
     let mut event_pump = window.sdl_context.event_pump().unwrap();
-    let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG).unwrap();
-    let ttf_context = sdl2::ttf::init().unwrap();
-    let texture_creator = canvas.texture_creator();
-    //let font = text::load_font("/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Fonts/JBMono/ttf/JetBrainsMono-Medium.ttf", 36, &ttf_context);
     let mut camera = Camera::new();
 
     'running: loop {
@@ -76,25 +71,27 @@ fn main() {
         }
 
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
-        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-        canvas.clear();
-        CoordinateLines2D::draw(&mut canvas);
+        window
+            .canvas
+            .set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+        window.canvas.clear();
+        CoordinateLines2D::draw(&mut window.canvas);
 
         Rect2D::draw(
-            &mut canvas,
+            &mut window.canvas,
             &mut [300i32, 300i32],
-            &texture_creator,
+            &window.texture_creator,
             &mut [256 as usize; 2],
         );
 
         Text::draw(
             "/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Fonts/JBMono/ttf/JetBrainsMono-Medium.ttf",
             36,
-            &ttf_context,
-            &texture_creator,
+            &window.ttf_context,
+            &window.texture_creator,
             "Some Text Object",
             &mut [100i32; 2],
-            &mut canvas,
+            &mut window.canvas,
             &mut camera
         );
 
@@ -107,14 +104,14 @@ fn main() {
 
         //ImageComp::draw(&mut canvas, &mut [700i32,700i32], &texture_creator, logo, &mut [100u32, 100u32]);
         ImageComp::draw(
-            &mut canvas,
+            &mut window.canvas,
             &mut [100i32, 700i32],
-            &texture_creator,
+            &window.texture_creator,
             player,
-            &mut [100u32, 100u32],
+            &mut [200u32, 200u32],
             &mut camera,
         );
 
-        canvas.present();
+        window.canvas.present();
     }
 }

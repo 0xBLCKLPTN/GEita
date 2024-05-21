@@ -19,22 +19,3 @@ pub enum GeitaComponents {
     Camera,
     Text,
 }
-
-pub struct Scene2D {
-    pub components: Vec<GeitaComponents>,
-}
-
-impl Scene2D {
-    pub fn init() -> Scene2D {
-        let mut components = Vec::new();
-        Scene2D { components }
-    }
-
-    pub fn add_child(&mut self, component: GeitaComponents) {
-        &self.components.push(component);
-    }
-}
-
-pub trait ComponentSystem {
-    fn add_child(&mut self, child: GeitaComponents);
-}
