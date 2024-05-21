@@ -14,14 +14,14 @@ use geita_components::text::Text;
 use imgui::sys::ImVec2;
 use imgui::{Condition, Context, FontGlyphRanges, FontSource, Style, StyleVar};
 
-use geita_components::{text, Camera, ImageComp, Rect2D};
+use geita_components::{text, Camera, CoordinateLines2D, ImageComp, Rect2D};
 use geita_core::window::CoreWindow;
 use sdl2::event::Event;
 use sdl2::image::{InitFlag, LoadTexture};
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::pixels::PixelFormatEnum;
-use sdl2::rect::Rect;
+use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, Texture, TextureCreator, TextureQuery};
 use sdl2::surface::Surface;
 use sdl2::sys::KeyCode;
@@ -78,6 +78,7 @@ fn main() {
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         canvas.clear();
+        CoordinateLines2D::draw(&mut canvas);
 
         Rect2D::draw(
             &mut canvas,
