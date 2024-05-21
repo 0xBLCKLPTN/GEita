@@ -1,6 +1,8 @@
 use crate::Color;
 use sdl2::rect::Point;
-use sdl2::render::{Canvas, Texture, TextureCreator};
+use sdl2::render::Canvas;
+
+use super::Line2D;
 
 pub struct CoordinateLines2D<'a> {
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
@@ -9,14 +11,18 @@ pub struct CoordinateLines2D<'a> {
 impl<'a> CoordinateLines2D<'a> {
     pub fn draw(canvas: &'a mut Canvas<sdl2::video::Window>) -> Self {
         // Coordinates
-        canvas.set_draw_color(Color::RGB(255, 0, 0));
-        canvas
-            .draw_line(Point::new(500, 500), Point::new(1000, 500))
-            .unwrap();
-        canvas.set_draw_color(Color::RGB(0, 255, 0));
-        canvas
-            .draw_line(Point::new(750, 250), Point::new(750, 750))
-            .unwrap();
+        Line2D::draw(
+            canvas,
+            [255u8, 0u8, 0u8],
+            [500i32, 500i32],
+            [1000i32, 500i32],
+        );
+        Line2D::draw(
+            canvas,
+            [0u8, 255u8, 0u8],
+            [750i32, 250i32],
+            [750i32, 750i32],
+        );
 
         Self { canvas }
     }
