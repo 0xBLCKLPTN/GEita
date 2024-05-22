@@ -1,14 +1,14 @@
-pub struct Camera {
+pub struct Camera2D {
     pub position: Vec<i32>,
     pub angle: Vec<i32>,
 }
 
-impl Camera {
-    pub fn new() -> Camera {
+impl Camera2D {
+    pub fn new() -> Camera2D {
         let mut position: Vec<i32> = vec![0, 0, 0];
         let mut angle = Vec::new();
 
-        Camera { position, angle }
+        Camera2D { position, angle }
     }
 
     pub fn change_position(&mut self, velocity: Vec<i32>) {

@@ -1,46 +1,60 @@
+/*
+    Сreating and managing a window.
+    Autor: Two Faced Janus.
+*/
+
+use super::types::BoxedResult;
 use crate::imgui;
 use crate::imgui_opengl_renderer::Renderer;
-use imgui::{Condition, Context, FontConfig, FontGlyphRanges, FontSource, TabBar, TabItem, Ui};
+use imgui::Context;
 use imgui_sdl2::ImguiSdl2;
-use sdl2::image::{InitFlag, LoadTexture, Sdl2ImageContext};
+use sdl2::image::{InitFlag, Sdl2ImageContext};
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::ttf::Sdl2TtfContext;
-use sdl2::video::{Window, WindowContext};
+use sdl2::video::WindowContext;
 use sdl2::EventPump;
 use sdl2::{Sdl, VideoSubsystem};
 
-enum KKK {
-    Ranvas(Canvas<sdl2::video::Window>),
-    Wanwas(Window),
+pub struct WindowConfig<'a> {
+    pub sizes: [u32; 2],
+    pub title: &'a str,
+    pub gui: Option<WindowGui>,
 }
 
-pub struct CoreWindow {
-    pub window_height: u32,
-    pub window_width: u32,
-    pub window_title: String,
+pub struct WindowGui {
+    imgui: Context,
+    imgui_sdl2: ImguiSdl2,
+}
+
+pub struct GeitaWindow<'a> {
+    pub window_config: WindowConfig<'a>,
     pub sdl_context: Sdl,
     pub video: VideoSubsystem,
     pub canvas: Canvas<sdl2::video::Window>,
     pub ttf_context: Sdl2TtfContext,
     pub image_context: Sdl2ImageContext,
-    pub texture_creator: TextureCreator<WindowContext>, //pub event_pump: EventPump,
-    pub imgui: Context,
-    pub imgui_sdl2: ImguiSdl2,
+    pub texture_creator: TextureCreator<WindowContext>,
     pub renderer: Renderer,
-    pub window: Option<Window>,
+    pub event_pump: EventPump,
 }
 
-impl CoreWindow {
-    pub fn new(title: String) -> CoreWindow {
-        let sdl_context = sdl2::init().unwrap();
-        let video = sdl_context.video().unwrap();
-        let mut window_width = 1000u32;
-        let mut window_height = 1000u32;
-        let mut event_pump = sdl_context.event_pump().unwrap();
+impl<'a> GeitaWindow<'a> {
+    pub fn init(window_title: &str, default_sizes: [u32; 2]) -> BoxedResult<GeitaWindow> {
+        let sdl_context = sdl2::init()?;
+        let video = sdl_context.video()?;
 
-        let image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG).unwrap();
-        let ttf_context = sdl2::ttf::init().unwrap();
+        let window_config = WindowConfig {
+            sizes: default_sizes,
+            title: window_title,
+            gui: None,
+        };
 
+        let mut event_pump = sdl_context.event_pump()?;
+
+        let image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG)?;
+        let ttf_context = sdl2::ttf::init()?;
+
+        // Init GL attributes
         {
             let gl_attr = video.gl_attr();
             gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
@@ -48,45 +62,39 @@ impl CoreWindow {
         }
 
         let mut window = video
-            .window(&title, window_height, window_width)
+            .window(&window_title, default_sizes[0], default_sizes[1])
             .position_centered()
             .resizable()
             .opengl()
             .allow_highdpi()
-            .build()
-            .unwrap();
+            .build()?;
 
         let _gl_context = window
             .gl_create_context()
             .expect("Couldn't create GL context");
+
         gl::load_with(|s| video.gl_get_proc_address(s) as _);
 
         let mut imgui = imgui::Context::create();
         imgui.set_ini_filename(None);
-
         let mut imgui_sdl2 = imgui_sdl2::ImguiSdl2::new(&mut imgui, &window);
 
         let renderer =
             imgui_opengl_renderer::Renderer::new(&mut imgui, |s| video.gl_get_proc_address(s) as _);
 
-        let mut canvas = window.into_canvas().build().unwrap();
+        let mut canvas = window.into_canvas().build()?;
         let texture_creator = canvas.texture_creator();
 
-        return CoreWindow {
-            window: None,
-            renderer,
-            imgui_sdl2,
-            sdl_context,
-            video,
+        Ok(GeitaWindow {
+            window_config,
             canvas,
-            imgui,
-            //event_pump,
-            window_width,
-            window_height,
+            video,
             ttf_context,
             image_context,
-            window_title: title.clone(),
+            sdl_context,
             texture_creator,
-        };
+            renderer,
+            event_pump,
+        })
     }
 }
