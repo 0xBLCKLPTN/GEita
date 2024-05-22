@@ -17,6 +17,8 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
 use geita_components::camera_2d::Camera2D;
+use geita_components::rect_2d::Rect2D;
+
 use geita_core::window::GeitaWindow;
 
 use std::time::Duration;
@@ -26,6 +28,7 @@ fn main() -> BoxedResult<()> {
     let mut camera = Camera2D::new();
 
     'running: loop {
+        // FIMXE: move into another file - events.rs.
         for event in window.event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -37,25 +40,25 @@ fn main() -> BoxedResult<()> {
                     keycode: Some(Keycode::Up),
                     ..
                 } => {
-                    camera.position[1] -= 10;
+                    camera.position[1] -= camera.speed;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Down),
                     ..
                 } => {
-                    camera.position[1] += 10;
+                    camera.position[1] += camera.speed;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),
                     ..
                 } => {
-                    camera.position[0] -= 10;
+                    camera.position[0] -= camera.speed;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
-                    camera.position[0] += 10;
+                    camera.position[0] += camera.speed;
                 }
                 _ => {}
             }
@@ -66,6 +69,18 @@ fn main() -> BoxedResult<()> {
             .canvas
             .set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         window.canvas.clear();
+
+        // <-------| Test
+
+        Rect2D::draw(
+            &mut window.canvas,
+            &mut [300i32, 300i32],
+            &window.texture_creator,
+            &mut [256 as usize; 2],
+        );
+
+        // |------->
+
         window.canvas.present();
     }
     Ok(())
