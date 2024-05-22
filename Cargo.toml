@@ -1,6 +1,6 @@
 [package]
 name = "geita"
-version = "0.1.0"
+version = "0.0.2-alpha"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -15,7 +15,7 @@ imgui-sdl2 = "0.15.3"
 #imgui-rs = "1.47.0"
 #memoffset = "0.9.1"
 #imgui-sdl2-support = "0.11.0"
-sdl2 = { version = "0.36.0", features = ["image"] }
+sdl2 = { version = "0.36.0", features = ["image", "ttf"] }
 serde = { version = "1.0.199", features = ["derive"] }
 serde_derive = "1.0.199"
 serde_json = "1.0.116"

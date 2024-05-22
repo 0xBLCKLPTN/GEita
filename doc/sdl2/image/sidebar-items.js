@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["get_linked_version","init"],"struct":["InitFlag","Sdl2ImageContext"],"trait":["ImageRWops","LoadSurface","LoadTexture","SaveSurface"]};

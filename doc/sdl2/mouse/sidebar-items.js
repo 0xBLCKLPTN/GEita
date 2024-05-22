@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["MouseButton","MouseWheelDirection","SystemCursor"],"struct":["Cursor","MouseButtonIterator","MouseState","MouseUtil","PressedMouseButtonIterator","RelativeMouseState"]};

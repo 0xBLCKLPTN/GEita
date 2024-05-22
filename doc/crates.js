@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["bitflags","cfg_if","chlorine","geita","gl","imgui","imgui_opengl_renderer","imgui_sdl2","imgui_sys","itoa","lazy_static","libc","lock_api","mint","parking_lot","parking_lot_core","proc_macro2","quote","ryu","scopeguard","sdl2","sdl2_sys","serde","serde_derive","serde_json","smallvec","syn","unicode_ident"];

@@ -1,15 +1,9 @@
-use imgui::{
-    Ui, Context, Condition,
-    TabBar, TabItem,
-    FontConfig, FontSource, FontGlyphRanges,
-};
 use crate::imgui;
-
+use imgui::{Condition, Context, FontConfig, FontGlyphRanges, FontSource, TabBar, TabItem, Ui};
 
 pub trait GeitaUi {
     fn show_project_manager_window(&self, is_open: &bool);
 }
-
 
 pub fn init_style(imgui: &mut Context) {
     let mut style = imgui.style_mut();
@@ -21,20 +15,18 @@ pub fn init_style(imgui: &mut Context) {
     style.use_classic_colors();
 }
 
-
 pub fn init_font(imgui: &mut Context) {
     let glyph_range = FontGlyphRanges::cyrillic();
-    let mono = imgui.fonts().add_font(&[FontSource::TtfData{
+    let mono = imgui.fonts().add_font(&[FontSource::TtfData {
         data: include_bytes!("../../resources/fonts/JB.ttf"), //this files are valid
         size_pixels: 16.0,
         config: Some(imgui::FontConfig {
-          glyph_ranges: glyph_range,
-          size_pixels: 16.0,
-          ..Default::default()
+            glyph_ranges: glyph_range,
+            size_pixels: 16.0,
+            ..Default::default()
         }),
     }]);
 }
-
 
 impl GeitaUi for Ui {
     fn show_project_manager_window(&self, is_open: &bool) {
@@ -45,17 +37,14 @@ impl GeitaUi for Ui {
             .position([20.0, 20.0], Condition::FirstUseEver)
             .size([960.0, 659.0], Condition::FirstUseEver)
             .build(|| {
-                TabBar::new("MyTabBar")
-                    .build(&self, || {
-                        TabItem::new("Локальные проекты")
-                            .build(&self, || {
-                                self.text("Local Projects");
-                            });
-                        TabItem::new("Удаленные проекты")
-                            .build(&self, || {
-                                self.text("Remote Projects");
-                            });
-                    });           
+                TabBar::new("MyTabBar").build(&self, || {
+                    TabItem::new("Локальные проекты").build(&self, || {
+                        self.text("Local Projects");
+                    });
+                    TabItem::new("Удаленные проекты").build(&self, || {
+                        self.text("Remote Projects");
+                    });
+                });
             });
     }
-} 
+}
