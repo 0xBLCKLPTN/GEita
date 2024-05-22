@@ -29,13 +29,27 @@ use sdl2::ttf::Font;
 use sdl2::video::{Window, WindowContext};
 use sdl2::{Sdl, VideoSubsystem};
 
+fn project(coord: [f32; 3], focal_length: f32, width: f32, height: f32) -> (i32, i32) {
+    let x = (coord[0] * focal_length) / coord[2] + (width / 2.0);
+    let y = (coord[1] * focal_length) / coord[2] + (height / 2.0);
+    (x.round() as i32, y.round() as i32)
+}
+
 fn main() {
     let mut window = CoreWindow::new("Project Manager".to_string());
     let mut event_pump = window.sdl_context.event_pump().unwrap();
+
     let mut camera = Camera::new();
 
     'running: loop {
         for event in event_pump.poll_iter() {
+            /*
+            window.imgui_sdl2.handle_event(&mut window.imgui, &event);
+            if window.imgui_sdl2.ignore_event(&event) {
+                continue;
+            }
+            */
+
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -76,13 +90,23 @@ fn main() {
             .set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         window.canvas.clear();
         CoordinateLines2D::draw(&mut window.canvas);
+        /*
+        let ui = window.imgui.frame();
+        ui.show_demo_window(&mut true);
 
-        Rect2D::draw(
-            &mut window.canvas,
-            &mut [300i32, 300i32],
-            &window.texture_creator,
-            &mut [256 as usize; 2],
-        );
+        unsafe {
+            gl::ClearColor(0.2, 0.2, 0.2, 1.0);
+            gl::Clear(gl::COLOR_BUFFER_BIT);
+        }
+        //window.window = Some(window.canvas.into_window());
+
+        window
+            .imgui_sdl2
+            .prepare_render(&ui, &window.window.unwrap());
+        window.renderer.render(&mut window.imgui);
+
+        window.window.unwrap().gl_swap_window();
+        */
 
         Text::draw(
             "/Users/twofacedjanus/Documents/geita_project/Fortnight-resources/Fonts/JBMono/ttf/JetBrainsMono-Medium.ttf",
