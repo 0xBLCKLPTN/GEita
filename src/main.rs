@@ -13,54 +13,22 @@ pub mod geita_core;
 
 use geita_core::types::BoxedResult;
 
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-
 use geita_components::camera_2d::Camera2D;
 use geita_components::rect_2d::Rect2D;
 
-use geita_core::window::GeitaWindow;
-
+use geita_core::window::{handle_event, GeitaWindow};
 use std::time::Duration;
 
-fn main() -> BoxedResult<()> {
+pub(crate) fn main() -> BoxedResult<()> {
     let mut window = GeitaWindow::init("object", [800u32, 600u32])?;
     let mut camera = Camera2D::new();
 
     'running: loop {
         // FIMXE: move into another file - events.rs.
         for event in window.event_pump.poll_iter() {
-            match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => break 'running,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => {
-                    camera.position[1] -= camera.speed;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Down),
-                    ..
-                } => {
-                    camera.position[1] += camera.speed;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => {
-                    camera.position[0] -= camera.speed;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => {
-                    camera.position[0] += camera.speed;
-                }
-                _ => {}
+            match handle_event(event, &mut camera) {
+                Some(_) => break 'running,
+                None => {}
             }
         }
 

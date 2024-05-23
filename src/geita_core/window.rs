@@ -4,11 +4,14 @@
 */
 
 use super::types::BoxedResult;
+use crate::geita_components::camera_2d::Camera2D;
 use crate::imgui;
 use crate::imgui_opengl_renderer::Renderer;
 use imgui::Context;
 use imgui_sdl2::ImguiSdl2;
+use sdl2::event::Event;
 use sdl2::image::{InitFlag, Sdl2ImageContext};
+use sdl2::keyboard::Keycode;
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::ttf::Sdl2TtfContext;
 use sdl2::video::WindowContext;
@@ -97,4 +100,40 @@ impl<'a> GeitaWindow<'a> {
             event_pump,
         })
     }
+}
+
+pub fn handle_event(event: Event, camera: &mut Camera2D) -> Option<u8> {
+    match event {
+        Event::Quit { .. }
+        | Event::KeyDown {
+            keycode: Some(Keycode::Escape),
+            ..
+        } => return Some(1),
+        Event::KeyDown {
+            keycode: Some(Keycode::Up),
+            ..
+        } => {
+            camera.position[1] -= camera.speed;
+        }
+        Event::KeyDown {
+            keycode: Some(Keycode::Down),
+            ..
+        } => {
+            camera.position[1] += camera.speed;
+        }
+        Event::KeyDown {
+            keycode: Some(Keycode::Left),
+            ..
+        } => {
+            camera.position[0] -= camera.speed;
+        }
+        Event::KeyDown {
+            keycode: Some(Keycode::Right),
+            ..
+        } => {
+            camera.position[0] += camera.speed;
+        }
+        _ => {}
+    }
+    return None;
 }

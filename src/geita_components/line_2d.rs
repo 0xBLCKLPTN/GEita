@@ -2,11 +2,14 @@ use sdl2::pixels::Color;
 use sdl2::rect::Point;
 use sdl2::render::Canvas;
 
+use super::GEitaComponentsEnum;
+
 pub struct Line2D<'a> {
     pub a_pos: [i32; 2],
     pub b_pos: [i32; 2],
     pub color: [u8; 3],
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
+    pub child_components: Vec<GEitaComponentsEnum>,
 }
 
 impl<'a> Line2D<'a> {
@@ -16,6 +19,7 @@ impl<'a> Line2D<'a> {
         a_pos: [i32; 2],
         b_pos: [i32; 2],
     ) -> Self {
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
         canvas.set_draw_color(Color::RGB(color[0], color[1], color[2]));
         canvas
             .draw_line(
@@ -29,6 +33,10 @@ impl<'a> Line2D<'a> {
             a_pos,
             b_pos,
             color,
+            child_components,
         }
+    }
+    pub fn add_component(&mut self, component: GEitaComponentsEnum) {
+        self.child_components.push(component)
     }
 }

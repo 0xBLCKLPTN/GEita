@@ -6,6 +6,8 @@ use sdl2::render::{Canvas, Texture, TextureCreator, TextureQuery};
 use sdl2::ttf::Font;
 use sdl2::video::Window;
 
+use super::GEitaComponentsEnum;
+
 pub struct Text<'a> {
     pub text: String,
     pub font: Font<'a, 'a>,
@@ -14,6 +16,7 @@ pub struct Text<'a> {
     pub texture: Texture<'a>,
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
     camera: &'a mut Camera2D,
+    pub child_components: Vec<GEitaComponentsEnum>,
 }
 
 impl<'a> Text<'a> {
@@ -27,6 +30,7 @@ impl<'a> Text<'a> {
         canvas: &'a mut Canvas<Window>,
         camera: &'a mut Camera2D,
     ) -> Text<'a> {
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
         let font = load_font(font_path, font_size, font_context);
         let texture = create_texture_from_text(text, &font, texture_creator);
         render_text(
@@ -46,7 +50,11 @@ impl<'a> Text<'a> {
             texture,
             canvas,
             camera,
+            child_components,
         }
+    }
+    pub fn add_component(&mut self, component: GEitaComponentsEnum) {
+        self.child_components.push(component)
     }
 }
 

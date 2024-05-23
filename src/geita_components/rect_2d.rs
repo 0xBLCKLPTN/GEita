@@ -7,12 +7,14 @@ use sdl2::video::WindowContext;
 use std::path::Path;
 
 use super::camera_2d::Camera2D;
+use super::GEitaComponentsEnum;
 
 pub struct Rect2D<'a> {
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
     pub position: [i32; 2],
     pub texture: Texture<'a>,
     pub size: [usize; 2],
+    pub child_components: Vec<GEitaComponentsEnum>,
 }
 
 impl<'a> Rect2D<'a> {
@@ -23,6 +25,7 @@ impl<'a> Rect2D<'a> {
         size: &mut [usize; 2],
         camera: &Camera2D,
     ) -> Self {
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
         let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
         let mut texture = texture_creator
             .create_texture_streaming(PixelFormatEnum::RGB24, 512, 512)
@@ -49,6 +52,7 @@ impl<'a> Rect2D<'a> {
             position: *position,
             texture,
             size: *size,
+            child_components,
         }
     }
 
@@ -58,6 +62,7 @@ impl<'a> Rect2D<'a> {
         texture_creator: &'a TextureCreator<WindowContext>,
         size: &mut [usize; 2],
     ) -> Self {
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
         let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
         let mut texture = texture_creator
             .create_texture_streaming(PixelFormatEnum::RGB24, 512, 512)
@@ -85,6 +90,10 @@ impl<'a> Rect2D<'a> {
             position: *position,
             texture,
             size: *size,
+            child_components,
         }
+    }
+    pub fn add_component(&mut self, component: GEitaComponentsEnum) {
+        self.child_components.push(component)
     }
 }

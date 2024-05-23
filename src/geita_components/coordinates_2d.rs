@@ -1,15 +1,16 @@
-use sdl2::pixels::Color;
-use sdl2::rect::Point;
 use sdl2::render::Canvas;
 
 use super::line_2d::Line2D;
+use super::GEitaComponentsEnum;
 
 pub struct CoordinateLines2D<'a> {
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
+    pub child_components: Vec<GEitaComponentsEnum>,
 }
 
 impl<'a> CoordinateLines2D<'a> {
     pub fn draw(canvas: &'a mut Canvas<sdl2::video::Window>) -> Self {
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
         // Coordinates
         Line2D::draw(
             canvas,
@@ -24,6 +25,12 @@ impl<'a> CoordinateLines2D<'a> {
             [750i32, 750i32],
         );
 
-        Self { canvas }
+        Self {
+            canvas,
+            child_components,
+        }
+    }
+    pub fn add_component(&mut self, component: GEitaComponentsEnum) {
+        self.child_components.push(component)
     }
 }

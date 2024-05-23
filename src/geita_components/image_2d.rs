@@ -7,6 +7,7 @@ use sdl2::video::WindowContext;
 use std::path::Path;
 
 use super::camera_2d::Camera2D;
+use super::GEitaComponentsEnum;
 
 pub struct ImageComp<'a> {
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
@@ -15,6 +16,7 @@ pub struct ImageComp<'a> {
     pub texture: Texture<'a>,
     pub size: [u32; 2],
     camera: &'a mut Camera2D,
+    pub child_components: Vec<GEitaComponentsEnum>,
 }
 
 impl<'a> ImageComp<'a> {
@@ -28,6 +30,8 @@ impl<'a> ImageComp<'a> {
     ) -> Self {
         let surface = Surface::new(512, 512, PixelFormatEnum::RGB24).unwrap();
         let texture = texture_creator.load_texture(png).unwrap();
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
+
         canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
         let rect1 = Rect::new(
             position[0] + camera.position[0],
@@ -44,6 +48,10 @@ impl<'a> ImageComp<'a> {
             texture,
             size: *size,
             camera,
+            child_components,
         }
+    }
+    pub fn add_component(&mut self, component: GEitaComponentsEnum) {
+        self.child_components.push(component)
     }
 }

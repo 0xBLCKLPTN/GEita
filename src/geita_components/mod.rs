@@ -4,3 +4,29 @@ pub mod image_2d;
 pub mod line_2d;
 pub mod rect_2d;
 pub mod text_2d;
+
+use camera_2d::Camera2D;
+use coordinates_2d::CoordinateLines2D;
+use image_2d::ImageComp;
+use line_2d::Line2D;
+use rect_2d::Rect2D;
+use text_2d::Text;
+
+pub enum GEitaComponentsEnum {
+    Camera2D,
+    CoordinateLines2D,
+    ImageComp,
+    Line2D,
+    Rect2D,
+    Text,
+}
+
+pub struct GEitaComponentSystem {
+    pub child_components: Vec<GEitaComponentsEnum>,
+}
+
+impl GEitaComponentSystem {
+    pub fn new(child_components: Vec<GEitaComponentsEnum>) -> GEitaComponentSystem {
+        Self { child_components }
+    }
+}
