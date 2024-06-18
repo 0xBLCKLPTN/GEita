@@ -32,7 +32,7 @@ use sdl2::image::LoadSurface;
 
 pub(crate) fn main() -> BoxedResult<()> {
     let mut window = GeitaWindow::init("object", [800u32, 600u32])?;
-    let mut camera = Camera2D::new();
+    let mut camera = Camera2D::new(10i32);
     let mut component_system = GEitaComponentSystem::init();
         
     //let cursor_surface = Surface::from_ll("~/Desktop/GEita/resources/textures/cursor.png");
@@ -58,6 +58,16 @@ pub(crate) fn main() -> BoxedResult<()> {
             .canvas
             .set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         window.canvas.clear();
+
+        Image2D::draw(
+            &mut window.canvas,
+            &mut [100i32, 700i32],
+            &mut window.texture_creator,
+            Path::new("/home/two-faced-janus/Desktop/GEita/resources/textures/grass_tile.png"),
+            &mut [100u32, 100u32],
+            Some(GEitaComponentsEnum::JopaNegra {a: 12i32, b: 10i32}),
+        
+        );
 
         
         

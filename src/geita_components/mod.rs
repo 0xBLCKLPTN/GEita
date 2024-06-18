@@ -12,14 +12,22 @@ use line_2d::Line2D;
 use rect_2d::Rect2D;
 use text_2d::Text;
 
+
 pub enum GEitaComponentsEnum {
     Camera2D,
     CoordinateLines2D,
-    Image2D,
     Line2D,
     Rect2D,
     Text,
+    JopaNegra {
+        a: i32,
+        b: i32,
+    },
+    None
 }
+
+
+
 
 pub struct GEitaComponentSystem {
     pub child_components: Vec<GEitaComponentsEnum>,
