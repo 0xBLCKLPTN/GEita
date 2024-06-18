@@ -19,14 +19,8 @@ pub enum GEitaComponentsEnum {
     Line2D,
     Rect2D,
     Text,
-    JopaNegra {
-        a: i32,
-        b: i32,
-    },
     None
 }
-
-
 
 
 pub struct GEitaComponentSystem {

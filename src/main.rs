@@ -65,7 +65,7 @@ pub(crate) fn main() -> BoxedResult<()> {
             &mut window.texture_creator,
             Path::new("/home/two-faced-janus/Desktop/GEita/resources/textures/grass_tile.png"),
             &mut [100u32, 100u32],
-            Some(GEitaComponentsEnum::JopaNegra {a: 12i32, b: 10i32}),
+            Some(None),
         
         );
 
