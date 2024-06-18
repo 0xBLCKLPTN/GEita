@@ -7,7 +7,7 @@ pub mod text_2d;
 
 use camera_2d::Camera2D;
 use coordinates_2d::CoordinateLines2D;
-use image_2d::ImageComp;
+use image_2d::Image2D;
 use line_2d::Line2D;
 use rect_2d::Rect2D;
 use text_2d::Text;
@@ -15,7 +15,7 @@ use text_2d::Text;
 pub enum GEitaComponentsEnum {
     Camera2D,
     CoordinateLines2D,
-    ImageComp,
+    Image2D,
     Line2D,
     Rect2D,
     Text,
@@ -26,7 +26,12 @@ pub struct GEitaComponentSystem {
 }
 
 impl GEitaComponentSystem {
-    pub fn new(child_components: Vec<GEitaComponentsEnum>) -> GEitaComponentSystem {
+    pub fn init() -> Self {
+        let mut child_components: Vec<GEitaComponentsEnum> = Vec::new();
         Self { child_components }
+    }
+
+    pub fn add(&mut self, component: GEitaComponentsEnum) {
+        self.child_components.push(component);
     }
 }

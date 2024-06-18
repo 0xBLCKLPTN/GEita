@@ -9,7 +9,7 @@ use std::path::Path;
 use super::camera_2d::Camera2D;
 use super::GEitaComponentsEnum;
 
-pub struct ImageComp<'a> {
+pub struct Image2D<'a> {
     pub canvas: &'a mut Canvas<sdl2::video::Window>,
     pub position: [i32; 2],
     pub path: &'a Path,
@@ -19,7 +19,22 @@ pub struct ImageComp<'a> {
     pub child_components: Vec<GEitaComponentsEnum>,
 }
 
-impl<'a> ImageComp<'a> {
+impl<'a> Image2D<'a> {
+    /* Component that render 2D image like as png or jpg (jpeg).
+    As dependency, component used libsdl2-image-dev.
+     
+    Usage Example:
+    ```rust
+        Image2D::draw(
+            &mut window.canvas,
+            &mut [120i32; 2], // position on canvas.
+            &window.texture_creator,
+            grass_tile, // Path
+            &mut camera,
+        );
+    ```
+    
+    */
     pub fn draw(
         canvas: &'a mut Canvas<sdl2::video::Window>,
         position: &mut [i32; 2],
@@ -41,7 +56,7 @@ impl<'a> ImageComp<'a> {
         );
         canvas.copy(&texture, None, rect1).unwrap();
 
-        ImageComp {
+        Image2D {
             canvas,
             position: *position,
             path: png,
